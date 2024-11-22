@@ -1,101 +1,122 @@
-import Image from "next/image";
+/* THINGS TO DO */
+// 1. Add a function to get the current date and time
+// 2. Connect KOF DB
+// 3. Add mulitple charts displaying data
+// 4. Add a function to update the charts automatically
+// 5. Use KOF color scheme
+// 6. Create more of a dashboard of different charts
+// 7. Create a table of full error logs
 
-export default function Home() {
+
+
+
+"use client" 
+// This ensures this file runs on the client side in Next.js
+// allowing it to include client-side libraries or interactions
+
+import { TrendingUp } from "lucide-react" 
+// Importing an icon from the React library for use in the footer.
+
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts" 
+// Importing chart components from Recharts(shadcn/ui) for creating the bar chart.
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card" 
+// Importing reusable Card components for styling and layout this is from shadcn/ui.
+
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart" 
+// Importing custom chart-related components for configuring and styling charts from shadcn/ui.
+
+const chartData = [
+  { month: "January", desktop: 186, mobile: 80 },
+  { month: "February", desktop: 305, mobile: 200 },
+  { month: "March", desktop: 237, mobile: 120 },
+  { month: "April", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "June", desktop: 214, mobile: 140 },
+]
+// An array of data objects where each object represents the desktop and mobile
+// visitor counts for a specific month this is for testing the chart feature, will change in the future for error logs.
+
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "hsl(var(--chart-1))", // Using CSS variable for the desktop bar color(tailwind).
+  },
+  mobile: {
+    label: "Mobile",
+    color: "hsl(var(--chart-2))", // Using CSS variable for the mobile bar color(tailwind).
+  },
+} satisfies ChartConfig 
+// A configuration object that defines labels and colors for the two chart data keys.
+
+function Page() {
+  // The main React component exported as the default for this page.
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+    <Card>
+      {/* Card component is a container for the chart and its description */}
+      <CardHeader>
+        {/* Card header contains the title and description */}
+        <CardTitle>Bar Chart - Testing Phase</CardTitle>
+        {/* The title of the chart */}
+        <CardDescription>January - June 2024</CardDescription>
+        {/* description of what the chart represents */}
+      </CardHeader>
+      <CardContent>
+        {/* Main content of the card (contains the chart itself) */}
+        <ChartContainer config={chartConfig}>
+          {/* ChartContainer wraps and applies configuration to the chart */}
+          <BarChart accessibilityLayer data={chartData}>
+            {/* BarChart is the main chart component using the chart data */}
+            <CartesianGrid vertical={false} />
+            {/* CartesianGrid adds gridlines to the chart, but vertical lines are disabled. Might adjust later depending on what we need */}
+            <XAxis
+              dataKey="month" // Maps the X-axis to the "month" key in the data.
+              tickLine={false} // Removes the small tick lines from the axis these were making the chart look funky.
+              tickMargin={10} // Adds space between the ticks and the axis, need this but can adjust.
+              axisLine={false} // Removes the horizontal axis line.
+              tickFormatter={(value) => value.slice(0, 3)} 
+              // Customizes the ticks to display only the first 3 letters of each month.
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <ChartTooltip
+              cursor={false} 
+              // Disables the cursor (highlighted area) when hovering over bars.
+              content={<ChartTooltipContent indicator="dashed" />}
+              // Creates custom tooltip with dashed indicators(Maybe for error types?).
+            />
+            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+            {/* Bar for desktop data with a rounded corner radius */}
+            <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+            {/* Bar for mobile data with a rounded corner radius */}
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        {/* Footer section of the card with additional details */}
+        <div className="flex gap-2 font-medium leading-none">
+          {/* Text indicating a trending up metric */}
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          {/* Adds a "TrendingUp" icon next to the text (Used this for testing but could be dynamic) */}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+        <div className="leading-none text-muted-foreground">
+          {/* Additional description text in a muted style */}
+          Showing total visitors for the last 6 months
+        </div>
+      </CardFooter>
+    </Card>
+  )
 }
+
+export default Page 
+// Default export of the Page component so it is rendered when visiting this route.
